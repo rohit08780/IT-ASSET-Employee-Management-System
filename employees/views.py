@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Employee
 from .forms import EmployeeForm
 from django.db.models import Q
+from django.core.paginator import Paginator
 # Create your views here.
 
 def employee_list(request):
@@ -29,12 +30,15 @@ def employee_list(request):
 		employees = employees.filter(is_active=True)
 	elif selected_status == "inactive":
 		employees = employees.filter(is_active=False)
-	
+
+	paginator = Paginator(employees,5)
+	page_number = request.GET.get("page")
+	page_obj = paginator.get_page(page_number)
 
 	return render(
 		request,
 		"employees/employee_list.html",
-		{"employees": employees, "query": query, "departments": departments, "selected_department": selected_department, "selected_status": selected_status,}
+		{"employees": page_obj, "query": query, "departments": departments, "selected_department": selected_department, "selected_status": selected_status, "page_obj": page_obj,}
 	)
 
 def employee_create(request):

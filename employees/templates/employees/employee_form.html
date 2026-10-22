@@ -1,11 +1,29 @@
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Add Employee</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Form</title>
 </head>
 <body>
-    <h1>Add New Employee</h1>
+    <h1>
+        {% if form.instance.pk %}
+            Update Employee
+        {% else %}
+            Add New Employee
+        {% endif %}
+    </h1>
+
+    {% if form.errors %}
+        <div style="color: red;">
+            <p>Please correct the errors below.</p>
+
+            {% if form.non_field_errors %}
+                {{ form.non_field_errors }}
+            {% endif %}
+        </div>
+    {% endif %}
 
     <form method="POST">
         {% csrf_token %}
