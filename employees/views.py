@@ -87,4 +87,7 @@ def employee_delete(request,pk):
 		request, "employees/employee_confirm_delete.html", {"employee": employee}
 	)
 
+def employee_detail(request,pk):
+	employee = get_object_or_404(Employee, pk=pk)
 
+	return render(request, "employees/employee_detail.html", {"employee":employee})
