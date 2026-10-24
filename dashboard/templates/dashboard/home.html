@@ -3,21 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Asset & Employee Management System</title>
+    <title>Employee Dashboard</title>
 </head>
 <body>
-    <h1>Welcome to IT Management Portal</h1>
+    <h1>IT Asset & Employee Management System</h1>
+    <h2>Employee Dashboard</h2>
 
-    <p>
-        Manage employees, IT assets, and support tickets
-        from one place.
-    </p>
+    <hr>
 
-    <h2>Project Modules</h2>
-    <ul>
-        <li>Employee Management</li>
-        <li>IT Asset Inventory</li>
-        <li>Dashboard</li>
-    </ul>
+    <div>
+        <h3>Total Employees</h3>
+        <p>{{ total_employees }}</p>
+    </div>
+
+    <div>
+        <h3>Active Employees</h3>
+        <p>{{ active_employees }}</p>
+    </div>
+
+    <div>
+        <h3>Inactive Employees</h3>
+        <p>{{ inactive_employees }}</p>
+    </div>
+
+    <div>
+        <h3>Total Departments</h3>
+        <p>{{ total_departments }}</p>
+    </div>
+
+    <hr>
+    <h2>Department-wise Employee Count</h2>
+
+    <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Total Employees</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in department_counts %}
+            <tr>
+                <td>{{ item.department }}</td>
+                <td>{{ item.employee_count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No department data available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+
+    <a href="{% url 'employee_list' %}">View All Employees</a>
 </body>
 </html>
