@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset List</title>
+</head>
+<body>
+
+    <h1>IT Asset Management System</h1>
+    <h2>Asset List</h2>
+
+    <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Asset Tag</th>
+                <th>Asset Name</th>
+                <th>Category</th>
+                <th>Brand</th>
+                <th>Serial Number</th>
+                <th>Purchase Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for asset in assets %}
+            <tr>
+                <td>{{ asset.asset_tag }}</td>
+                <td>{{ asset.asset_name }}</td>
+                <td>{{ asset.get_category_display }}</td>
+                <td>{{ asset.brand|default:"-" }}</td>
+                <td>{{ asset.serial_number|default:"-" }}</td>
+                <td>{{ asset.purchase_date|default:"-" }}</td>
+                <td>{{ asset.get_status_display }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No assets found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <a href="/">Back to Dashboard</a>
+
+</body>
+</html>
