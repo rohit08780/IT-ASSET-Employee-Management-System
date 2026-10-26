@@ -10,6 +10,13 @@
 
     <h1>IT Asset Management System</h1>
     <h2>Asset List</h2>
+    <p>
+        <strong>Total Assets:</strong> {{ total_assets }}
+    </p>
+    <p>
+        <a href="{% url 'asset_create' %}">+ Add New Asset</a>
+    </p>
+
     
 <form method="GET">
     <input
@@ -40,6 +47,7 @@
     </option>
     {% endfor %}
 </select>
+<th>Action</th>
 
 
     <button type="submit">Search</button>
@@ -51,13 +59,19 @@
     <table border="1" cellpadding="10" cellspacing="0">
         <thead>
             <tr>
-                <th>Asset Tag</th>
-                <th>Asset Name</th>
+                <th>
+                    <a href="?sort=asset_tag&q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}">Asset Tag</a>
+                </th>
+                <th>
+                    <a href="?sort=asset_name&q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}">Asset Name</a>
+                </th>
                 <th>Category</th>
                 <th>Brand</th>
                 <th>Serial Number</th>
                 <th>Purchase Date</th>
-                <th>Status</th>
+                <th>
+                    <a href="?sort=status&q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}">Status</a>
+                </th>
             </tr>
         </thead>
 
@@ -71,6 +85,9 @@
                 <td>{{ asset.serial_number|default:"-" }}</td>
                 <td>{{ asset.purchase_date|default:"-" }}</td>
                 <td>{{ asset.get_status_display }}</td>
+                <td>
+                    <a href="{% url 'asset_edit' asset.pk %}">Edit</a>
+                </td>
             </tr>
             {% empty %}
             <tr>

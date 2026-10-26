@@ -22,7 +22,7 @@ class Asset(models.Model):
     asset_name = models.CharField(max_length=100)
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES,)
     brand = models.CharField(max_length=100, blank=True)
-    serial_number = models.CharField(max_length=100, unique=True, null=True,blank=True,)
+    serial_number = models.CharField(max_length=100, unique=True, null=True,blank=True)
     purchase_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Available",)
     created_at = models.DateTimeField(auto_now_add=True)
