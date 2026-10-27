@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Details</title>
+</head>
+<body>
+
+    <h1>IT Asset Management System</h1>
+    <h2>Asset Details</h2>
+
+    <p>
+        <strong>Asset Tag:</strong>
+        {{ asset.asset_tag }}
+    </p>
+
+    <p>
+        <strong>Asset Name:</strong>
+        {{ asset.asset_name }}
+    </p>
+
+    <p>
+        <strong>Category:</strong>
+        {{ asset.get_category_display }}
+    </p>
+
+    <p>
+        <strong>Brand:</strong>
+        {{ asset.brand|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Serial Number:</strong>
+        {{ asset.serial_number|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Purchase Date:</strong>
+        {{ asset.purchase_date|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        {{ asset.get_status_display }}
+    </p>
+    <p>
+        <strong>Assigned To:</strong>
+        {{ asset.assigned_to|default:"Unassigned" }}
+    </p>
+
+    <p>
+        <strong>Created At:</strong>
+        {{ asset.created_at|date:"d-m-Y H:i" }}
+    </p>
+
+    <a href="{% url 'asset_list' %}">Back to Asset List</a>
+
+</body>
+</html>

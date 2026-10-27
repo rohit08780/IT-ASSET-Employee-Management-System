@@ -77,3 +77,26 @@ def asset_edit(request, pk):
         {"form": form}
     )
 
+
+def asset_delete(request, pk):
+    asset = get_object_or_404(Asset, pk=pk)
+
+    if request.method == "POST":
+        asset.delete()
+        return redirect("asset_list")
+
+    return render(
+        request,
+        "assets/asset_confirm_delete.html",
+        {"asset": asset}
+    )
+
+
+def asset_detail(request, pk):
+    asset = get_object_or_404(Asset, pk=pk)
+
+    return render(
+        request,
+        "assets/asset_detail.html",
+        {"asset": asset}
+    )

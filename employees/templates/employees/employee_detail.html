@@ -30,5 +30,39 @@
     <a href="{% url 'employee_update' employee.pk %}">Edit Employee</a>
     |
     <a href="{% url 'employee_list' %}">Back to Employee List</a>
+    
+<hr>
+
+<h3>Assigned Assets</h3>
+
+{% if assigned_assets %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Asset Tag</th>
+                <th>Asset Name</th>
+                <th>Category</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assigned_assets %}
+                <tr>
+                    <td>{{ asset.asset_tag }}</td>
+                    <td>
+                        <a href="{% url 'asset_detail' asset.pk %}">
+                            {{ asset.asset_name }}
+                        </a>
+                    </td>
+                    <td>{{ asset.get_category_display }}</td>
+                    <td>{{ asset.get_status_display }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No assets assigned to this employee.</p>
+{% endif %}
+
 </body>
 </html>

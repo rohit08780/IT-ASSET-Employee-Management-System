@@ -63,5 +63,35 @@
     <br>
 
     <a href="{% url 'employee_list' %}">View All Employees</a>
+    
+        <hr>
+
+        <h2>IT Asset Dashboard</h2>
+
+        <div>
+            <h3>Total Assets</h3>
+            <p>{{ total_assets }}</p>
+        </div>
+
+        <div>
+            <h3>Available Assets</h3>
+            <p>{{ available_assets }}</p>
+        </div>
+
+        <div>
+            <h3>Assigned Assets</h3>
+            <p>{{ assigned_assets }}</p>
+        </div>
+
+        <div>
+            <h3>Under Repair Assets</h3>
+            <p>{{ under_repair_assets }}</p>
+        </div>
+
+        <div>
+            <h3>Retired Assets</h3>
+            <p>{{ retired_assets }}</p>
+        </div>
+
 </body>
 </html>

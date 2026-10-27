@@ -11,6 +11,7 @@ class AssetAdmin(admin.ModelAdmin):
         "category",
         "brand",
         "status",
+        "assigned_to",
         "purchase_date",
     )
 

@@ -47,7 +47,9 @@
     </option>
     {% endfor %}
 </select>
+<th>Assigned To</th>
 <th>Action</th>
+<th>Details</th>
 
 
     <button type="submit">Search</button>
@@ -86,7 +88,14 @@
                 <td>{{ asset.purchase_date|default:"-" }}</td>
                 <td>{{ asset.get_status_display }}</td>
                 <td>
+                    {{ asset.assigned_to|default:"Unassigned" }}
+                </td>
+                <td>
+                    <a href="{% url 'asset_detail' asset.pk %}">View Details</a>
+                </td>
+                <td>
                     <a href="{% url 'asset_edit' asset.pk %}">Edit</a>
+                    <a href="{% url 'asset_delete' asset.pk %}">Delete</a>
                 </td>
             </tr>
             {% empty %}
