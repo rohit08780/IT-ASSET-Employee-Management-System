@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Asset
+from .models import Asset, AssetHistory
 from .forms import AssetForm
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -47,7 +47,13 @@ def asset_create(request):
         form = AssetForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            asset = form.save()
+
+            AssetHistory.objects.create(
+                asset=asset,
+                action="Created",
+                details=f"Asset {asset.asset_tag} was created."
+            )
             return redirect("asset_list")
     else:
         form = AssetForm()
@@ -66,7 +72,12 @@ def asset_edit(request, pk):
         form = AssetForm(request.POST, instance=asset)
 
         if form.is_valid():
-            form.save()
+            asset = form.save()
+            AssetHistory.objects.create(
+                asset = asset,
+                action = "Updated",
+                details = f"Asset{asset.asset_tag} was updated."
+            )
             return redirect("asset_list")
     else:
         form = AssetForm(instance=asset)
@@ -82,6 +93,13 @@ def asset_delete(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
 
     if request.method == "POST":
+        asset_tag = asset.asset_tag
+        asset_name = asset.asset_name
+        AssetHistory.objects.create(
+            asset = asset,
+            action="Deleted",
+            details=f"Asset {asset_tag} - {asset_name} was deleted."
+        )
         asset.delete()
         return redirect("asset_list")
 

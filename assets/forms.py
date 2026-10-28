@@ -35,5 +35,7 @@ class AssetForm(forms.ModelForm):
                 "assigned_to",
                 "Please select an employee when asset status is Assigned."
             )
+        elif status in ["Available","Under Repair", "Retired"]:
+            cleaned_data["assigned_to"]= None
 
         return cleaned_data

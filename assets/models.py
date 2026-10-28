@@ -37,3 +37,21 @@ class Asset(models.Model):
 
     def __str__(self):
         return f"{self.asset_tag} - {self.asset_name}"
+
+
+class AssetHistory(models.Model):
+    asset = models.ForeignKey(
+        Asset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="history"
+    )
+    action = models.CharField(max_length=100)
+    details = models.TextField(blank=True)
+    changed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if self.asset:
+            return f"{self.asset.asset_tag} - {self.action}"
+        return f"Deleted Asset - {self.action}"

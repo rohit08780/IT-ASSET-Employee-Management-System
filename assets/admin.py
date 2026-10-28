@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import Asset
+from .models import Asset, AssetHistory
 
 # Register your models here.
 @admin.register(Asset)
@@ -18,3 +18,6 @@ class AssetAdmin(admin.ModelAdmin):
     list_filter = ("category", "status", "brand")
     search_fields = ("asset_tag", "asset_name", "brand", "serial_number")
     ordering = ("asset_tag",)
+
+
+admin.site.register(AssetHistory)
