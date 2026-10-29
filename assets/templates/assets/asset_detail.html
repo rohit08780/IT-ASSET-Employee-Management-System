@@ -57,5 +57,34 @@
 
     <a href="{% url 'asset_list' %}">Back to Asset List</a>
 
+    
+<hr>
+
+<h3>Asset History</h3>
+
+{% if history %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Details</th>
+                <th>Date & Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in history %}
+                <tr>
+                    <td>{{ record.action }}</td>
+                    <td>{{ record.details|default:"No details available" }}</td>
+                    <td>{{ record.changed_at|date:"d-m-Y H:i:s" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No history available for this asset.</p>
+{% endif %}
+
+
 </body>
 </html>

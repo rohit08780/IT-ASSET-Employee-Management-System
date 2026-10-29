@@ -65,19 +65,64 @@ def asset_create(request):
     )
 
 
+
 def asset_edit(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
 
     if request.method == "POST":
+        old_asset_tag = asset.asset_tag
+        old_asset_name = asset.asset_name
+        old_brand = asset.brand
+        old_status = asset.status
+        old_assigned_to = asset.assigned_to
+
         form = AssetForm(request.POST, instance=asset)
 
         if form.is_valid():
             asset = form.save()
-            AssetHistory.objects.create(
-                asset = asset,
-                action = "Updated",
-                details = f"Asset{asset.asset_tag} was updated."
-            )
+            changes = []
+
+            if old_asset_tag != asset.asset_tag:
+                changes.append(
+                    f"Asset Tag: {old_asset_tag} -> {asset.asset_tag}"
+                )
+
+            if old_asset_name != asset.asset_name:
+                changes.append(
+                    f"Asset Name: {old_asset_name} -> {asset.asset_name}"
+                )
+
+            if old_brand != asset.brand:
+                changes.append(
+                    f"Brand: {old_brand} -> {asset.brand}"
+                )
+
+            if old_status != asset.status:
+                changes.append(
+                    f"Status: {old_status} -> {asset.status}"
+                )
+
+            if old_assigned_to != asset.assigned_to:
+                old_employee = (
+                    str(old_assigned_to)
+                    if old_assigned_to else "Unassigned"
+                )
+                new_employee = (
+                    str(asset.assigned_to)
+                    if asset.assigned_to else "Unassigned"
+                )
+
+                changes.append(
+                    f"Assigned To: {old_employee} -> {new_employee}"
+                )
+
+            if changes:
+                AssetHistory.objects.create(
+                    asset=asset,
+                    action="Updated",
+                    details="; ".join(changes)
+                )
+
             return redirect("asset_list")
     else:
         form = AssetForm(instance=asset)
@@ -112,9 +157,10 @@ def asset_delete(request, pk):
 
 def asset_detail(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
+    history = asset.history.order_by("-changed_at")
 
     return render(
         request,
         "assets/asset_detail.html",
-        {"asset": asset}
+        {"asset": asset, "history": history,}
     )
