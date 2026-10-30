@@ -8,6 +8,16 @@
 <body>
     <h1>IT Asset & Employee Management System</h1>
     <h2>Employee Dashboard</h2>
+    
+    <p>Welcome, {{ request.user.username }}!</p>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+
+    <hr>
+
 
     <hr>
 
