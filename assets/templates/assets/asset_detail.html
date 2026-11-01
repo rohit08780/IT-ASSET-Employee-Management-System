@@ -1,90 +1,241 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Details</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>IT Asset Management System</h1>
-    <h2>Asset Details</h2>
+{% block title %}Asset Details | IT Asset Management{% endblock %}
 
-    <p>
-        <strong>Asset Tag:</strong>
-        {{ asset.asset_tag }}
-    </p>
+{% block content %}
 
-    <p>
-        <strong>Asset Name:</strong>
-        {{ asset.asset_name }}
-    </p>
+<style>
+    .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
 
-    <p>
-        <strong>Category:</strong>
-        {{ asset.get_category_display }}
-    </p>
+    .detail-header h1 {
+        color: #1e293b;
+        font-size: 25px;
+    }
 
-    <p>
-        <strong>Brand:</strong>
-        {{ asset.brand|default:"Not provided" }}
-    </p>
+    .detail-card {
+        background: white;
+        padding: 22px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        margin-bottom: 25px;
+    }
 
-    <p>
-        <strong>Serial Number:</strong>
-        {{ asset.serial_number|default:"Not provided" }}
-    </p>
+    .detail-card h2 {
+        color: #1e293b;
+        font-size: 19px;
+        margin-bottom: 18px;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 12px;
+    }
 
-    <p>
-        <strong>Purchase Date:</strong>
-        {{ asset.purchase_date|default:"Not provided" }}
-    </p>
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
 
-    <p>
-        <strong>Status:</strong>
-        {{ asset.get_status_display }}
-    </p>
-    <p>
-        <strong>Assigned To:</strong>
-        {{ asset.assigned_to|default:"Unassigned" }}
-    </p>
+    .detail-item {
+        padding: 12px;
+        background: #f8fafc;
+        border-radius: 6px;
+    }
 
-    <p>
-        <strong>Created At:</strong>
-        {{ asset.created_at|date:"d-m-Y H:i" }}
-    </p>
+    .detail-label {
+        display: block;
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
 
-    <a href="{% url 'asset_list' %}">Back to Asset List</a>
+    .detail-value {
+        color: #1e293b;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
 
-    
-<hr>
+    .history-table-container {
+        overflow-x: auto;
+    }
 
-<h3>Asset History</h3>
+    .history-table {
+        width: 100%;
+        min-width: 600px;
+        border-collapse: collapse;
+    }
 
-{% if history %}
-    <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Action</th>
-                <th>Details</th>
-                <th>Date & Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in history %}
-                <tr>
-                    <td>{{ record.action }}</td>
-                    <td>{{ record.details|default:"No details available" }}</td>
-                    <td>{{ record.changed_at|date:"d-m-Y H:i:s" }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No history available for this asset.</p>
-{% endif %}
+    .history-table th {
+        background: #1e293b;
+        color: white;
+        text-align: left;
+        padding: 13px;
+    }
 
+    .history-table td {
+        padding: 13px;
+        border-bottom: 1px solid #e2e8f0;
+    }
 
-</body>
-</html>
+    .history-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .history-empty {
+        background: #f8fafc;
+        padding: 16px;
+        border-radius: 6px;
+        color: #64748b;
+    }
+
+    .back-button {
+        display: inline-block;
+        background: #2563eb;
+        color: white;
+        padding: 10px 17px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .back-button:hover {
+        background: #1d4ed8;
+        color: white;
+    }
+
+    @media (max-width: 600px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Page Header -->
+
+<div class="detail-header">
+    <h1>Asset Details</h1>
+
+    <a href="{% url 'asset_list' %}" class="back-button">
+        ← Back to Asset List
+    </a>
+</div>
+
+<!-- Asset Information -->
+
+<div class="detail-card">
+
+    <h2>Asset Information</h2>
+
+    <div class="detail-grid">
+
+        <div class="detail-item">
+            <span class="detail-label">Asset Tag</span>
+            <span class="detail-value">{{ asset.asset_tag }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Asset Name</span>
+            <span class="detail-value">{{ asset.asset_name }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Category</span>
+            <span class="detail-value">{{ asset.get_category_display }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Brand</span>
+            <span class="detail-value">{{ asset.brand|default:"Not provided" }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Serial Number</span>
+            <span class="detail-value">{{ asset.serial_number|default:"Not provided" }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Purchase Date</span>
+            <span class="detail-value">{{ asset.purchase_date|default:"Not provided" }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">{{ asset.get_status_display }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Assigned To</span>
+            <span class="detail-value">{{ asset.assigned_to|default:"Unassigned" }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Created At</span>
+            <span class="detail-value">{{ asset.created_at|date:"d-m-Y H:i" }}</span>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Asset History -->
+
+<div class="detail-card">
+
+    <h2>Asset History / Audit Log</h2>
+
+    {% if history %}
+
+        <div class="history-table-container">
+
+            <table class="history-table">
+
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Details</th>
+                        <th>Date & Time</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for record in history %}
+
+                    <tr>
+                        <td>
+                            <strong>{{ record.action }}</strong>
+                        </td>
+
+                        <td>
+                            {{ record.details|default:"No details available" }}
+                        </td>
+
+                        <td>
+                            {{ record.changed_at|date:"d-m-Y H:i:s" }}
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <p class="history-empty">
+            No history available for this asset.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

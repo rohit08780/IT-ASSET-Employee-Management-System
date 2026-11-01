@@ -1,68 +1,301 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Details</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Employee Details | IT Asset Management{% endblock %}
+
+{% block content %}
+
+<style>
+    .employee-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .employee-header h1 {
+        color: #1e293b;
+        font-size: 25px;
+    }
+
+    .employee-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .employee-buttons a {
+        padding: 10px 16px;
+        border-radius: 5px;
+        text-decoration: none;
+        color: white;
+    }
+
+    .edit-button {
+        background: #15803d;
+    }
+
+    .back-button {
+        background: #2563eb;
+    }
+
+    .detail-card {
+        background: white;
+        padding: 22px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        margin-bottom: 25px;
+    }
+
+    .detail-card h2 {
+        color: #1e293b;
+        font-size: 19px;
+        margin-bottom: 18px;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 12px;
+    }
+
+    .employee-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .detail-item {
+        padding: 13px;
+        background: #f8fafc;
+        border-radius: 6px;
+    }
+
+    .detail-label {
+        display: block;
+        color: #64748b;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+
+    .detail-value {
+        color: #1e293b;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .status-active {
+        color: #15803d;
+        background: #dcfce7;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+
+    .status-inactive {
+        color: #b91c1c;
+        background: #fee2e2;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+
+    .asset-table-container {
+        overflow-x: auto;
+    }
+
+    .assigned-asset-table {
+        width: 100%;
+        min-width: 550px;
+        border-collapse: collapse;
+    }
+
+    .assigned-asset-table th {
+        background: #1e293b;
+        color: white;
+        padding: 13px;
+        text-align: left;
+    }
+
+    .assigned-asset-table td {
+        padding: 13px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .assigned-asset-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .asset-detail-link {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .asset-detail-link:hover {
+        text-decoration: underline;
+    }
+
+    .empty-message {
+        background: #f8fafc;
+        color: #64748b;
+        padding: 16px;
+        border-radius: 6px;
+    }
+
+    @media (max-width: 600px) {
+        .employee-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Page Header -->
+
+<div class="employee-header">
+
     <h1>Employee Details</h1>
 
-    <p><strong>Employee ID:</strong> {{ employee.employee_id }}</p>
-    <p><strong>First Name:</strong> {{ employee.first_name }}</p>
-    <p><strong>Last Name:</strong> {{ employee.last_name }}</p>
-    <p><strong>Email:</strong> {{ employee.email }}</p>
-    <p><strong>Department:</strong> {{ employee.department }}</p>
-    <p><strong>Designation:</strong> {{ employee.designation }}</p>
-    <p><strong>Phone:</strong> {{ employee.phone|default:"Not provided" }}</p>
-    <p><strong>Date of Joining:</strong> {{ employee.date_of_joining|date:"d-m-Y" }}</p>
+    <div class="employee-buttons">
 
-    <p>
-        <strong>Status:</strong>
-        {% if employee.is_active %}
-            Active
-        {% else %}
-            Inactive
+        {% if perms.employees.change_employee %}
+            <a
+                href="{% url 'employee_update' employee.pk %}"
+                class="edit-button">
+                Edit Employee
+            </a>
         {% endif %}
-    </p>
 
-    <a href="{% url 'employee_update' employee.pk %}">Edit Employee</a>
-    |
-    <a href="{% url 'employee_list' %}">Back to Employee List</a>
-    
-<hr>
+        <a
+            href="{% url 'employee_list' %}"
+            class="back-button">
+            ← Back to Employee List
+        </a>
 
-<h3>Assigned Assets</h3>
+    </div>
 
-{% if assigned_assets %}
-    <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Asset Tag</th>
-                <th>Asset Name</th>
-                <th>Category</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for asset in assigned_assets %}
-                <tr>
-                    <td>{{ asset.asset_tag }}</td>
-                    <td>
-                        <a href="{% url 'asset_detail' asset.pk %}">
-                            {{ asset.asset_name }}
-                        </a>
-                    </td>
-                    <td>{{ asset.get_category_display }}</td>
-                    <td>{{ asset.get_status_display }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No assets assigned to this employee.</p>
-{% endif %}
+</div>
 
-</body>
-</html>
+<!-- Employee Information -->
+
+<div class="detail-card">
+
+    <h2>Employee Information</h2>
+
+    <div class="employee-grid">
+
+        <div class="detail-item">
+            <span class="detail-label">Employee ID</span>
+            <span class="detail-value">{{ employee.employee_id }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">First Name</span>
+            <span class="detail-value">{{ employee.first_name }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Last Name</span>
+            <span class="detail-value">{{ employee.last_name }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ employee.email }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Department</span>
+            <span class="detail-value">{{ employee.department }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Designation</span>
+            <span class="detail-value">{{ employee.designation }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">{{ employee.phone|default:"Not provided" }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Date of Joining</span>
+            <span class="detail-value">{{ employee.date_of_joining|date:"d-m-Y" }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Employment Status</span>
+
+            {% if employee.is_active %}
+                <span class="status-active">Active</span>
+            {% else %}
+                <span class="status-inactive">Inactive</span>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Assigned Assets -->
+
+<div class="detail-card">
+
+    <h2>Assigned Assets</h2>
+
+    {% if assigned_assets %}
+
+        <div class="asset-table-container">
+
+            <table class="assigned-asset-table">
+
+                <thead>
+                    <tr>
+                        <th>Asset Tag</th>
+                        <th>Asset Name</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for asset in assigned_assets %}
+
+                    <tr>
+
+                        <td>{{ asset.asset_tag }}</td>
+
+                        <td>
+                            <a
+                                href="{% url 'asset_detail' asset.pk %}"
+                                class="asset-detail-link">
+                                {{ asset.asset_name }}
+                            </a>
+                        </td>
+
+                        <td>{{ asset.get_category_display }}</td>
+
+                        <td>{{ asset.get_status_display }}</td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <p class="empty-message">
+            No assets assigned to this employee.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

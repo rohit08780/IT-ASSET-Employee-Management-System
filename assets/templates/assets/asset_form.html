@@ -1,27 +1,201 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Asset</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>IT Asset Management System</h1>
-    <h2>Add New Asset</h2>
+{% block title %}Asset Form | IT Asset Management{% endblock %}
 
-    <form method="POST">
+{% block content %}
+
+<style>
+    .form-header {
+        margin-bottom: 22px;
+    }
+
+    .form-header h1 {
+        color: #1e293b;
+        font-size: 25px;
+    }
+
+    .asset-form-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        max-width: 750px;
+    }
+
+    .form-section-title {
+        color: #334155;
+        font-size: 17px;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .asset-form p {
+        margin-bottom: 18px;
+    }
+
+    .asset-form label {
+        display: block;
+        color: #334155;
+        font-weight: 600;
+        margin-bottom: 7px;
+    }
+
+    .asset-form input,
+    .asset-form select,
+    .asset-form textarea {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid #cbd5e1;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .asset-form input:focus,
+    .asset-form select:focus,
+    .asset-form textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37,99,235,0.12);
+    }
+
+    .asset-form input[type="checkbox"] {
+        width: auto;
+    }
+
+    .asset-form .helptext {
+        display: block;
+        color: #64748b;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .error-box {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+
+    .error-box ul,
+    .asset-form .errorlist {
+        color: #dc2626;
+        margin-top: 5px;
+        padding-left: 20px;
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+    }
+
+    .save-button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 11px 22px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .save-button:hover {
+        background: #1d4ed8;
+    }
+
+    .cancel-button {
+        background: #64748b;
+        color: white;
+        padding: 11px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .cancel-button:hover {
+        background: #475569;
+        color: white;
+    }
+</style>
+
+<!-- Header -->
+
+<div class="form-header">
+
+    <h1>
+        {% if form.instance.pk %}
+            Update Asset
+        {% else %}
+            Add New Asset
+        {% endif %}
+    </h1>
+
+    <p>Enter asset information in the form below.</p>
+
+</div>
+
+<!-- Error Messages -->
+
+{% if form.errors %}
+
+    <div class="error-box">
+
+        <strong>Please correct the errors below:</strong>
+
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+
+            {% if field.errors %}
+
+                <p>
+                    <strong>{{ field.label }}:</strong>
+                    {{ field.errors }}
+                </p>
+
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+<!-- Asset Form -->
+
+<div class="asset-form-card">
+
+    <h2 class="form-section-title">Asset Information</h2>
+
+    <form method="POST" class="asset-form">
+
         {% csrf_token %}
 
         {{ form.as_p }}
 
-        <button type="submit">Save Asset</button>
+        <div class="form-buttons">
+
+            <button type="submit" class="save-button">
+                {% if form.instance.pk %}
+                    Update Asset
+                {% else %}
+                    Save Asset
+                {% endif %}
+            </button>
+
+            <a
+                href="{% url 'asset_list' %}"
+                class="cancel-button">
+                Cancel
+            </a>
+
+        </div>
+
     </form>
 
-    <br>
+</div>
 
-    <a href="{% url 'asset_list' %}">Back to Asset List</a>
-
-</body>
-</html>
+{% endblock %}

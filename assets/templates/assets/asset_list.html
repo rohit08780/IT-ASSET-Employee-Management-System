@@ -1,24 +1,180 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset List</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>IT Asset Management System</h1>
-    <h2>Asset List</h2>
-    <p>
-        <strong>Total Assets:</strong> {{ total_assets }}
-    </p>
-    <p>
-        <a href="{% url 'asset_create' %}">+ Add New Asset</a>
-    </p>
+{% block title %}Asset Management | IT Asset Management{% endblock %}
 
-    
-<form method="GET">
+{% block content %}
+
+<style>
+    .asset-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .asset-header h1 {
+        font-size: 24px;
+        color: #1e293b;
+    }
+
+    .add-asset-button {
+        background: #2563eb;
+        color: white;
+        padding: 11px 18px;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .add-asset-button:hover {
+        background: #1d4ed8;
+        color: white;
+    }
+
+    .asset-summary {
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+        padding: 16px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+
+    .asset-summary strong {
+        font-size: 20px;
+        color: #1e293b;
+    }
+
+    .asset-filter {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 18px;
+        background: #f8fafc;
+        border-radius: 7px;
+        margin-bottom: 20px;
+    }
+
+    .asset-filter input,
+    .asset-filter select {
+        min-width: 150px;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 5px;
+        background: white;
+    }
+
+    .asset-search-button {
+        background: #2563eb;
+    }
+
+    .reset-link {
+        text-decoration: none;
+        color: #64748b;
+        padding: 10px;
+    }
+
+    .asset-table-container {
+        overflow-x: auto;
+    }
+
+    .asset-table {
+        width: 100%;
+        min-width: 1100px;
+        border-collapse: collapse;
+    }
+
+    .asset-table th {
+        background: #1e293b;
+        color: white;
+        padding: 14px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .asset-table th a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .asset-table th a:hover {
+        text-decoration: underline;
+    }
+
+    .asset-table td {
+        padding: 13px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .asset-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .asset-status {
+        display: inline-block;
+        padding: 5px 10px;
+        background: #e0e7ff;
+        color: #3730a3;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    .asset-actions {
+        display: flex;
+        gap: 10px;
+        white-space: nowrap;
+    }
+
+    .asset-actions a {
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .details-link {
+        color: #2563eb;
+    }
+
+    .edit-link {
+        color: #15803d;
+    }
+
+    .delete-link {
+        color: #dc2626;
+    }
+
+    .dashboard-link {
+        display: inline-block;
+        margin-top: 22px;
+        text-decoration: none;
+        color: #2563eb;
+    }
+</style>
+
+<!-- Header -->
+
+<div class="asset-header">
+    <h1>Asset Management</h1>
+
+    <a href="{% url 'asset_create' %}" class="add-asset-button">
+        + Add New Asset
+    </a>
+</div>
+
+<!-- Asset Summary -->
+
+<div class="asset-summary">
+    Total Assets:
+    <strong>{{ total_assets }}</strong>
+</div>
+
+<!-- Search and Filters -->
+
+<form method="GET" class="asset-filter">
+
     <input
         type="text"
         name="q"
@@ -30,85 +186,151 @@
         <option value="">All Categories</option>
 
         {% for value, label in categories %}
-        <option value="{{ value }}"
-            {% if category_filter == value %}selected{% endif %}>
-            {{ label }}
-        </option>
+            <option
+                value="{{ value }}"
+                {% if category_filter == value %}selected{% endif %}
+            >
+                {{ label }}
+            </option>
         {% endfor %}
     </select>
-    
-<select name="status">
-    <option value="">All Statuses</option>
 
-    {% for value, label in statuses %}
-    <option value="{{ value }}"
-        {% if status_filter == value %}selected{% endif %}>
-        {{ label }}
-    </option>
-    {% endfor %}
-</select>
-<th>Assigned To</th>
-<th>Action</th>
-<th>Details</th>
+    <select name="status">
+        <option value="">All Statuses</option>
 
+        {% for value, label in statuses %}
+            <option
+                value="{{ value }}"
+                {% if status_filter == value %}selected{% endif %}
+            >
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
 
-    <button type="submit">Search</button>
-    <a href="{% url 'asset_list' %}">Reset</a>
+    <button type="submit" class="asset-search-button">
+        Search / Filter
+    </button>
+
+    <a href="{% url 'asset_list' %}" class="reset-link">
+        Reset Filters
+    </a>
+
 </form>
 
-<br>
+<!-- Asset Table -->
 
-    <table border="1" cellpadding="10" cellspacing="0">
+<div class="asset-table-container">
+
+    <table class="asset-table">
+
         <thead>
             <tr>
+
                 <th>
-                    <a href="?sort=asset_tag&q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}">Asset Tag</a>
+                    <a href="?sort=asset_tag&q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}">
+                        Asset Tag ↕
+                    </a>
                 </th>
+
                 <th>
-                    <a href="?sort=asset_name&q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}">Asset Name</a>
+                    <a href="?sort=asset_name&q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}">
+                        Asset Name ↕
+                    </a>
                 </th>
+
                 <th>Category</th>
                 <th>Brand</th>
                 <th>Serial Number</th>
                 <th>Purchase Date</th>
+
                 <th>
-                    <a href="?sort=status&q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}">Status</a>
+                    <a href="?sort=status&q={{ search_query|urlencode }}&category={{ category_filter|urlencode }}&status={{ status_filter|urlencode }}">
+                        Status ↕
+                    </a>
                 </th>
+
+                <th>Assigned To</th>
+                <th>Details</th>
+                <th>Actions</th>
+
             </tr>
         </thead>
 
         <tbody>
+
             {% for asset in assets %}
+
             <tr>
+
                 <td>{{ asset.asset_tag }}</td>
+
                 <td>{{ asset.asset_name }}</td>
+
                 <td>{{ asset.get_category_display }}</td>
+
                 <td>{{ asset.brand|default:"-" }}</td>
+
                 <td>{{ asset.serial_number|default:"-" }}</td>
+
                 <td>{{ asset.purchase_date|default:"-" }}</td>
-                <td>{{ asset.get_status_display }}</td>
+
+                <td>
+                    <span class="asset-status">
+                        {{ asset.get_status_display }}
+                    </span>
+                </td>
+
                 <td>
                     {{ asset.assigned_to|default:"Unassigned" }}
                 </td>
+
                 <td>
-                    <a href="{% url 'asset_detail' asset.pk %}">View Details</a>
+                    <a
+                        href="{% url 'asset_detail' asset.pk %}"
+                        class="details-link">
+                        View Details
+                    </a>
                 </td>
+
                 <td>
-                    <a href="{% url 'asset_edit' asset.pk %}">Edit</a>
-                    <a href="{% url 'asset_delete' asset.pk %}">Delete</a>
+                    <div class="asset-actions">
+
+                        <a
+                            href="{% url 'asset_edit' asset.pk %}"
+                            class="edit-link">
+                            Edit
+                        </a>
+
+                        <a
+                            href="{% url 'asset_delete' asset.pk %}"
+                            class="delete-link">
+                            Delete
+                        </a>
+
+                    </div>
                 </td>
+
             </tr>
+
             {% empty %}
+
             <tr>
-                <td colspan="7">No assets found.</td>
+                <td colspan="10" style="text-align:center;">
+                    No assets found.
+                </td>
             </tr>
+
             {% endfor %}
+
         </tbody>
-        
+
     </table>
 
-    <br>
-    <a href="/">Back to Dashboard</a>
+</div>
 
-</body>
-</html>
+<a href="/" class="dashboard-link">
+    ← Back to Dashboard
+</a>
+
+{% endblock %}

@@ -1,21 +1,184 @@
 
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Employee List</title>
+{% extends "base.html" %}
 
-</head>
-<body>
-    <h1>Employee Management System</h1>
+{% block title %}Employee Management | IT Asset Management{% endblock %}
 
-    <a href="{% url 'employee_create' %}">Add New Employee</a>
+{% block content %}
 
-    <hr />
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
 
-    <form method="GET">
-        <input type="text" name="q" placeholder="Search employee..." value="{{ query }}">
-        <select name="department">
+    .page-header h1 {
+        font-size: 24px;
+        color: #1e293b;
+    }
+
+    .add-button {
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        padding: 11px 18px;
+        border-radius: 5px;
+    }
+
+    .add-button:hover {
+        background: #1d4ed8;
+        color: white;
+    }
+
+    .filter-section {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 22px;
+        padding: 18px;
+        background: #f8fafc;
+        border-radius: 7px;
+    }
+
+    .filter-section input,
+    .filter-section select {
+        min-width: 150px;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 5px;
+        background: white;
+    }
+
+    .search-button {
+        background: #2563eb;
+    }
+
+    .clear-button {
+        color: #64748b;
+        text-decoration: none;
+        padding: 10px;
+    }
+
+    .employee-table-container {
+        overflow-x: auto;
+    }
+
+    .employee-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    .employee-table th {
+        background: #1e293b;
+        color: white;
+        padding: 14px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .employee-table td {
+        padding: 13px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .employee-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .active-status {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .inactive-status {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 10px;
+        white-space: nowrap;
+    }
+
+    .action-links a {
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .view-link {
+        color: #2563eb;
+    }
+
+    .edit-link {
+        color: #15803d;
+    }
+
+    .delete-link {
+        color: #dc2626;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .pagination a {
+        text-decoration: none;
+        padding: 8px 13px;
+        background: #e2e8f0;
+        border-radius: 5px;
+        color: #1e293b;
+    }
+
+    .pagination a:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .pagination span {
+        font-weight: bold;
+        color: #475569;
+    }
+</style>
+
+<div class="page-header">
+    <h1>Employee Management</h1>
+
+    <a href="{% url 'employee_create' %}" class="add-button">
+        + Add New Employee
+    </a>
+</div>
+
+<!-- Search and Filters -->
+
+<form method="GET" class="filter-section">
+
+    <input
+        type="text"
+        name="q"
+        placeholder="Search employee..."
+        value="{{ query }}"
+    >
+
+    <select name="department">
         <option value="">All Departments</option>
 
         {% for department in departments %}
@@ -27,24 +190,37 @@
             </option>
         {% endfor %}
     </select>
+
     <select name="status">
-    <option value="">All Statuses</option>
+        <option value="">All Statuses</option>
 
-    <option value="active"
-        {% if selected_status == "active" %}selected{% endif %}>
-        Active
-    </option>
+        <option value="active"
+            {% if selected_status == "active" %}selected{% endif %}>
+            Active
+        </option>
 
-    <option value="inactive"
-        {% if selected_status == "inactive" %}selected{% endif %}>
-        Inactive
-    </option>
-</select>
-        <button type="submit">Search/ Filter</button>
-        <a href="{% url 'employee_list' %}">Clear</a>
-    </form>
+        <option value="inactive"
+            {% if selected_status == "inactive" %}selected{% endif %}>
+            Inactive
+        </option>
+    </select>
 
-    <table border="1" cellpadding="10">
+    <button type="submit" class="search-button">
+        Search / Filter
+    </button>
+
+    <a href="{% url 'employee_list' %}" class="clear-button">
+        Clear Filters
+    </a>
+
+</form>
+
+<!-- Employee Table -->
+
+<div class="employee-table-container">
+
+    <table class="employee-table">
+
         <thead>
             <tr>
                 <th>Employee ID</th>
@@ -53,63 +229,112 @@
                 <th>Department</th>
                 <th>Designation</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th>Actions</th>
             </tr>
-
         </thead>
+
         <tbody>
+
             {% for employee in employees %}
+
             <tr>
                 <td>{{ employee.employee_id }}</td>
-                <td>{{ employee.first_name }} {{employee.last_name }}</td>
+
+                <td>
+                    {{ employee.first_name }} {{ employee.last_name }}
+                </td>
+
                 <td>{{ employee.email }}</td>
+
                 <td>{{ employee.department }}</td>
+
                 <td>{{ employee.designation }}</td>
+
                 <td>
                     {% if employee.is_active %}
-                        Active
+                        <span class="status-badge active-status">
+                            Active
+                        </span>
                     {% else %}
-                        Inactive
+                        <span class="status-badge inactive-status">
+                            Inactive
+                        </span>
                     {% endif %}
                 </td>
+
                 <td>
-                    <a href="{% url 'employee_update' employee.pk %}">Edit</a>
-                    <a href="{% url 'employee_delete' employee.pk %}">Delete</a>
-                    <a href="{% url 'employee_detail' employee.pk %}">View</a>
+                    <div class="action-links">
+
+                        <a
+                            href="{% url 'employee_detail' employee.pk %}"
+                            class="view-link">
+                            View
+                        </a>
+
+                        <a
+                            href="{% url 'employee_update' employee.pk %}"
+                            class="edit-link">
+                            Edit
+                        </a>
+
+                        <a
+                            href="{% url 'employee_delete' employee.pk %}"
+                            class="delete-link">
+                            Delete
+                        </a>
+
+                    </div>
                 </td>
             </tr>
+
             {% empty %}
+
             <tr>
-                <td colspan="7">No employees found</td>
+                <td colspan="7" style="text-align:center;">
+                    No employees found.
+                </td>
             </tr>
+
             {% endfor %}
+
         </tbody>
 
     </table>
-    <div class="pagination">
-        {% if page_obj.has_previous %}
-            <a href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_department %}department={{ selected_department|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page=1">
-                First
-            </a>
 
-            <a href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_department %}department={{ selected_department|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">
-                Previous
-            </a>
-        {% endif %}
-
-        <span>
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_department %}department={{ selected_department|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">
-                Next
-            </a>
-
-            <a href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_department %}department={{ selected_department|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
-                Last
-            </a>
-        {% endif %}
 </div>
-</body>
-</html>
+
+<!-- Pagination -->
+
+<div class="pagination">
+
+    {% if page_obj.has_previous %}
+
+        <a href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_department %}department={{ selected_department|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page=1">
+            First
+        </a>
+
+        <a href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_department %}department={{ selected_department|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">
+            Previous
+        </a>
+
+    {% endif %}
+
+    <span>
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+
+        <a href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_department %}department={{ selected_department|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">
+            Next
+        </a>
+
+        <a href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_department %}department={{ selected_department|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
+            Last
+        </a>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

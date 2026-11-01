@@ -2,8 +2,12 @@ from django.shortcuts import render, redirect
 from .models import Asset, AssetHistory
 from .forms import AssetForm
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
+from django.contrib import messages
 
 # Create your views here.
+@login_required
 def asset_list(request):
     assets = Asset.objects.all().order_by("asset_tag")
     sort_by = request.GET.get("sort", "asset_tag")
@@ -41,7 +45,8 @@ def asset_list(request):
     context = {"assets": assets, "search_query": search_query, "category_filter": category_filter, "categories": Asset.CATEGORY_CHOICES, "status_filter": status_filter, "statuses": Asset.STATUS_CHOICES, "total_assets": total_assets,}
     return render(request, "assets/asset_list.html", context)
 
-
+@login_required
+@permission_required('assets.add_asset', raise_exception=True)
 def asset_create(request):
     if request.method == "POST":
         form = AssetForm(request.POST)
@@ -54,6 +59,7 @@ def asset_create(request):
                 action="Created",
                 details=f"Asset {asset.asset_tag} was created."
             )
+            messages.success(request, "Asset created successfully!")
             return redirect("asset_list")
     else:
         form = AssetForm()
@@ -64,8 +70,8 @@ def asset_create(request):
         {"form": form}
     )
 
-
-
+@login_required
+@permission_required('assets.add_asset', raise_exception=True)
 def asset_edit(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
 
@@ -122,7 +128,7 @@ def asset_edit(request, pk):
                     action="Updated",
                     details="; ".join(changes)
                 )
-
+            messages.success(request, "Asset updated successfully!")
             return redirect("asset_list")
     else:
         form = AssetForm(instance=asset)
@@ -133,7 +139,8 @@ def asset_edit(request, pk):
         {"form": form}
     )
 
-
+@login_required
+@permission_required('assets.add_asset', raise_exception=True)
 def asset_delete(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
 
@@ -146,6 +153,7 @@ def asset_delete(request, pk):
             details=f"Asset {asset_tag} - {asset_name} was deleted."
         )
         asset.delete()
+        messages.success(request, "Asset deleted successfully!")
         return redirect("asset_list")
 
     return render(
@@ -154,7 +162,7 @@ def asset_delete(request, pk):
         {"asset": asset}
     )
 
-
+@login_required
 def asset_detail(request, pk):
     asset = get_object_or_404(Asset, pk=pk)
     history = asset.history.order_by("-changed_at")

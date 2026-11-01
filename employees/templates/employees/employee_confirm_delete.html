@@ -1,24 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirm Delete Employee</title>
-</head>
-<body>
+
+{% extends "base.html" %}
+
+{% block title %}Delete Employee | IT Asset Management{% endblock %}
+
+{% block content %}
+
+<style>
+    .delete-container {
+        max-width: 550px;
+        margin: 40px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .warning-icon {
+        font-size: 45px;
+        margin-bottom: 12px;
+    }
+
+    .delete-container h1 {
+        color: #b91c1c;
+        font-size: 25px;
+        margin-bottom: 18px;
+    }
+
+    .delete-message {
+        color: #475569;
+        line-height: 1.7;
+        margin-bottom: 25px;
+    }
+
+    .employee-name {
+        color: #1e293b;
+        font-weight: bold;
+    }
+
+    .delete-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .confirm-delete {
+        background: #dc2626;
+        color: white;
+        border: none;
+        padding: 11px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .confirm-delete:hover {
+        background: #b91c1c;
+    }
+
+    .cancel-delete {
+        background: #64748b;
+        color: white;
+        padding: 11px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .cancel-delete:hover {
+        background: #475569;
+        color: white;
+    }
+</style>
+
+<div class="delete-container">
+
+    <div class="warning-icon">⚠️</div>
+
     <h1>Delete Employee</h1>
 
-    <p>
+    <p class="delete-message">
         Are you sure you want to delete
-        <strong>{{ employee.first_name }} {{ employee.last_name }}</strong>?
+        <span class="employee-name">
+            {{ employee.first_name }} {{ employee.last_name }}
+        </span>?
+
+        <br>
+        This action cannot be undone.
     </p>
 
     <form method="POST">
+
         {% csrf_token %}
-        <button type="submit">Yes, Delete</button>
+
+        <div class="delete-buttons">
+
+            <button type="submit" class="confirm-delete">
+                Yes, Delete Employee
+            </button>
+
+            <a
+                href="{% url 'employee_list' %}"
+                class="cancel-delete">
+                Cancel
+            </a>
+
+        </div>
+
     </form>
 
-    <br>
-    <a href="{% url 'employee_list' %}">Cancel</a>
-</body>
-</html>
+</div>
+
+{% endblock %}

@@ -61,16 +61,20 @@ class EmployeeForm(forms.ModelForm):
     def clean_phone(self):
         phone = self.cleaned_data.get("phone", "").strip()
 
-        if phone and not phone.replace("+", "").isdigit():
+        # Phone number is optional
+        if not phone:
+            return phone
+
+        # Must contain exactly 10 digits
+        if not phone.isdigit() or len(phone) != 10:
             raise forms.ValidationError(
-                "Enter a valid phone number using digits and an optional +."
+                "Enter a valid 10-digit mobile number."
             )
 
-        if phone.count("+") > 1 or (
-            "+" in phone and not phone.startswith("+")
-        ):
+        # Indian mobile number must start with 6, 7, 8, or 9
+        if phone[0] not in "6789":
             raise forms.ValidationError(
-                "The + sign is allowed only at the beginning."
+                "Mobile number must start with 6, 7, 8, or 9."
             )
 
         return phone

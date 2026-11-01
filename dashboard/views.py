@@ -3,9 +3,10 @@ from django.shortcuts import render
 from employees.models import Employee
 from django.db.models import Count
 from assets.models import Asset
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-
+@login_required
 def home(request):
 	total_employees = Employee.objects.count()
 	active_employees = Employee.objects.filter(is_active=True).count()

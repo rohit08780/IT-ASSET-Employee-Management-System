@@ -1,56 +1,162 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard</title>
-</head>
-<body>
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | IT Asset Management{% endblock %}
+
+{% block content %}
+
+<style>
+    .dashboard-heading {
+        margin-bottom: 20px;
+    }
+
+    .dashboard-heading h1 {
+        font-size: 25px;
+        margin-bottom: 8px;
+        color: #1e293b;
+    }
+
+    .dashboard-heading p {
+        color: #64748b;
+    }
+
+    .section-title {
+        font-size: 20px;
+        margin: 30px 0 15px;
+        color: #1e293b;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 18px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-left: 5px solid #2563eb;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .stat-card h3 {
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 12px;
+    }
+
+    .stat-card p {
+        font-size: 28px;
+        font-weight: bold;
+        color: #1e293b;
+    }
+
+    .stat-card.green {
+        border-left-color: #16a34a;
+    }
+
+    .stat-card.red {
+        border-left-color: #dc2626;
+    }
+
+    .stat-card.orange {
+        border-left-color: #ea580c;
+    }
+
+    .stat-card.purple {
+        border-left-color: #9333ea;
+    }
+
+    .dashboard-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .dashboard-table th,
+    .dashboard-table td {
+        padding: 14px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+    }
+
+    .dashboard-table th {
+        background: #f1f5f9;
+        color: #334155;
+    }
+
+    .dashboard-link {
+        display: inline-block;
+        margin-top: 18px;
+        padding: 11px 18px;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .dashboard-link:hover {
+        background: #1d4ed8;
+        color: white;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+</style>
+
+<div class="dashboard-heading">
     <h1>IT Asset & Employee Management System</h1>
-    <h2>Employee Dashboard</h2>
-    
-    <p>Welcome, {{ request.user.username }}!</p>
+    <p>Welcome to your management dashboard.</p>
+</div>
 
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit">Logout</button>
-    </form>
+<!-- Employee Statistics -->
 
-    <hr>
+<h2 class="section-title">Employee Overview</h2>
 
+<div class="stats-grid">
 
-    <hr>
-
-    <div>
+    <div class="stat-card">
         <h3>Total Employees</h3>
         <p>{{ total_employees }}</p>
     </div>
 
-    <div>
+    <div class="stat-card green">
         <h3>Active Employees</h3>
         <p>{{ active_employees }}</p>
     </div>
 
-    <div>
+    <div class="stat-card red">
         <h3>Inactive Employees</h3>
         <p>{{ inactive_employees }}</p>
     </div>
 
-    <div>
+    <div class="stat-card purple">
         <h3>Total Departments</h3>
         <p>{{ total_departments }}</p>
     </div>
 
-    <hr>
-    <h2>Department-wise Employee Count</h2>
+</div>
 
-    <table border="1" cellpadding="10" cellspacing="0">
+<a href="{% url 'employee_list' %}" class="dashboard-link">
+    View All Employees
+</a>
+
+<!-- Department Summary -->
+
+<h2 class="section-title">Department-wise Employee Count</h2>
+
+<div class="table-container">
+    <table class="dashboard-table">
         <thead>
             <tr>
                 <th>Department</th>
                 <th>Total Employees</th>
             </tr>
         </thead>
+
         <tbody>
             {% for item in department_counts %}
             <tr>
@@ -63,45 +169,44 @@
             </tr>
             {% endfor %}
         </tbody>
-        <hr>
-
-            <h3>IT Asset Management</h3>
-
-            <a href="{% url 'asset_list' %}">View All Assets</a>
     </table>
+</div>
 
-    <br>
+<!-- Asset Statistics -->
 
-    <a href="{% url 'employee_list' %}">View All Employees</a>
-    
-        <hr>
+<h2 class="section-title">IT Asset Overview</h2>
 
-        <h2>IT Asset Dashboard</h2>
+<div class="stats-grid">
 
-        <div>
-            <h3>Total Assets</h3>
-            <p>{{ total_assets }}</p>
-        </div>
+    <div class="stat-card">
+        <h3>Total Assets</h3>
+        <p>{{ total_assets }}</p>
+    </div>
 
-        <div>
-            <h3>Available Assets</h3>
-            <p>{{ available_assets }}</p>
-        </div>
+    <div class="stat-card green">
+        <h3>Available Assets</h3>
+        <p>{{ available_assets }}</p>
+    </div>
 
-        <div>
-            <h3>Assigned Assets</h3>
-            <p>{{ assigned_assets }}</p>
-        </div>
+    <div class="stat-card purple">
+        <h3>Assigned Assets</h3>
+        <p>{{ assigned_assets }}</p>
+    </div>
 
-        <div>
-            <h3>Under Repair Assets</h3>
-            <p>{{ under_repair_assets }}</p>
-        </div>
+    <div class="stat-card orange">
+        <h3>Under Repair Assets</h3>
+        <p>{{ under_repair_assets }}</p>
+    </div>
 
-        <div>
-            <h3>Retired Assets</h3>
-            <p>{{ retired_assets }}</p>
-        </div>
+    <div class="stat-card red">
+        <h3>Retired Assets</h3>
+        <p>{{ retired_assets }}</p>
+    </div>
 
-</body>
-</html>
+</div>
+
+<a href="{% url 'asset_list' %}" class="dashboard-link">
+    View All Assets
+</a>
+
+{% endblock %}
