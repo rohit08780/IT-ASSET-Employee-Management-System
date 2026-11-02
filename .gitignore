@@ -12,4 +12,23 @@ db.sqlite3
 .vscode/
 
 # Other
-*.log3
+*.log3# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Django
+.env
+db.sqlite3
+media/
+staticfiles/
+
+# IDE files
+.vs/
+.vscode/
+.idea/
+
+# Logs
+*.log
