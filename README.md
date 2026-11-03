@@ -217,4 +217,9 @@ https://www.linkedin.com/in/rohit-khilari-8524bb228/
 ![Dashboard](screenshots/dashboard.png)
 
 ### Employee Management
-![Employee List](screenshots/employees(3).png)
+
+![Employee List](screenshots/Employees.png)
+![Employee List](screenshots/Employees(3).png)
+
+### Asset Management
+![Asset List](screenshots/assets.png)
