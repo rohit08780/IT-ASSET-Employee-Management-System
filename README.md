@@ -210,3 +210,8 @@ https://www.linkedin.com/in/rohit-khilari-8524bb228/
 ---
 
 *This project was developed for practical learning and demonstration of Django web development skills.*
+
+## Screenshots
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
