@@ -226,3 +226,6 @@ https://www.linkedin.com/in/rohit-khilari-8524bb228/
 
 ### Asset Detail
 ![Asset Detail](screenshots/asset-detail.png)
+
+### Asset History / Audit Log
+![Asset History](screenshots/asset-history.png)
