@@ -223,3 +223,6 @@ https://www.linkedin.com/in/rohit-khilari-8524bb228/
 
 ### Asset Management
 ![Asset List](screenshots/assets.png)
+
+### Asset Detail
+![Asset Detail](screenshots/asset-detail.png)
